@@ -1,9 +1,24 @@
+using HandleDataConcurrencies.Data;
+using HandleDataConcurrencies.Jobs;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddControllers();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Register the database context
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
+// Register the PaymentProcessingJob
+//builder.Services.AddHostedService<PaymentProcessingJob>();
 
 var app = builder.Build();
 
@@ -32,6 +47,8 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
+
+app.MapDefaultControllerRoute();
 
 app.Run();
 
