@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HandleDataConcurrencies.Migrations
 {
     /// <inheritdoc />
-    public partial class initialcreate : Migration
+    public partial class intialcreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,8 +17,10 @@ namespace HandleDataConcurrencies.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsProcessed = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    CreateDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreateDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },

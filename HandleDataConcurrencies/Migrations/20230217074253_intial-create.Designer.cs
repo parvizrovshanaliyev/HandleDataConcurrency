@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HandleDataConcurrencies.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230216113911_initial-create1")]
-    partial class initialcreate1
+    [Migration("20230217074253_intial-create")]
+    partial class intialcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,8 +36,11 @@ namespace HandleDataConcurrencies.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsProcessed")
+                        .HasColumnType("bit");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()

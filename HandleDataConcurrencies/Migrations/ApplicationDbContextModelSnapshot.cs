@@ -33,8 +33,11 @@ namespace HandleDataConcurrencies.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsProcessed")
+                        .HasColumnType("bit");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
