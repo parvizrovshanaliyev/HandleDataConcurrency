@@ -14,6 +14,20 @@ namespace HandleDataConcurrencies.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Product> Products { get; set; }
 
+        public override int SaveChanges()
+        {
+            foreach (var entry in ChangeTracker.Entries<CheckConcurrencyEntity>())
+            {
+                if (entry.State == EntityState.Modified)
+                {
+                    // Increment the version number of the entity
+                    entry.Entity.Version=Guid.NewGuid().ToByteArray();
+                }
+            }
+
+            return base.SaveChanges();
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Payment>()
