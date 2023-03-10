@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HandleDataConcurrencies\HandleDataConcurrencies.csproj" />
+    <ProjectReference Include="..\HandleDataConcurrencies\HandleDataConcurrency.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿using HandleDataConcurrencies.Models;
+using HandleDataConcurrency.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace HandleDataConcurrencies.Data
@@ -11,6 +12,7 @@ namespace HandleDataConcurrencies.Data
         }
 
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Product> Products { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
