@@ -55,46 +55,85 @@ namespace HandleDataConcurrencies.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Payment payment)
+        public async Task<IActionResult> Put(int id, decimal? amount, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (id != payment.Id)
+
+            var savedData = false;
+            var retryCount = 0;
+
+            while (!savedData && retryCount < 3)
             {
-                return BadRequest();
+                try
+                {
+                    var dbPayment =
+                        await _dbContext.Payments.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+
+                    if (dbPayment == null)
+                    {
+                        return NotFound();
+                    }
+
+
+                   
+                    // dbPayment.IsProcessed = true;
+                    // dbPayment.Status = PaymentStatus.Processing;
+                    // dbPayment.UpdateDate = DateTime.UtcNow;
+
+                    //_dbContext.Payments.Update(dbPayment);
+                    // Save the changes to the database
+                    
+                     var updated=new Payment() { Id = dbPayment.Id, Amount = amount ?? 100 };
+                    _dbContext.Attach(updated);
+                    //dbPayment.Amount = amount ?? 100;
+                    
+                    await _dbContext.SaveChangesAsync(cancellationToken);
+                    
+                    savedData = true;
+                    retryCount = 3;
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    await HandleDbUpdateConcurrencyExceptionAsync<Payment>(ex);
+                    retryCount++;
+                }
             }
 
-            // remove all ModelState errors
-            ModelState.Clear();
 
-            var dbPayment = await _dbContext.Payments.FindAsync(id);
-            if (dbPayment == null)
+            return Ok();
+        }
+        
+        private async Task HandleDbUpdateConcurrencyExceptionAsync<T>(DbUpdateConcurrencyException ex)
+            where T : class
+        {
+            var entry = ex.Entries.FirstOrDefault(e => e.Entity is T);
+            if (entry == null)
             {
-                return NotFound();
+                throw new NotSupportedException($"Entity of type {typeof(T).Name} not found in {ex.GetType().Name}");
             }
 
-            // check for concurrency
-            if (!payment.RowVersion.SequenceEqual(dbPayment.RowVersion))
+            var currentValues = entry.CurrentValues;
+            var dbValues = await entry.GetDatabaseValuesAsync();
+
+            if (dbValues == null)
             {
-                ModelState.AddModelError("RowVersion", "The payment has been updated or deleted by another user. Please refresh and try again.");
-                return Conflict(ModelState);
+                throw new NotSupportedException($"Unable to get database values for entity of type {typeof(T).Name}");
             }
 
-            dbPayment.Amount = payment.Amount;
-            dbPayment.IsProcessed = payment.IsProcessed;
-            dbPayment.Status = payment.Status;
-            dbPayment.UpdateDate = DateTime.UtcNow;
-
-            try
+            foreach (var prop in currentValues.Properties)
             {
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                ModelState.AddModelError("RowVersion", "The payment has been updated or deleted by another user. Please refresh and try again.");
-                return Conflict(ModelState);
-            }
+                var currentValue = currentValues[prop];
+                var dbValue = dbValues[prop];
 
-            return NoContent();
+                // Detect changes and handle accordingly
+                if (!Equals(currentValue, dbValue))
+                {
+                    entry.OriginalValues[prop] = dbValue;
+                }
+            }
+            
+            
+            // Retry update after refreshing the entity from the database
+            await entry.ReloadAsync();
         }
     }
-
 }

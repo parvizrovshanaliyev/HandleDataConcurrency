@@ -8,6 +8,8 @@ namespace HandleDataConcurrency.Models
         public byte[] Version { get; set; }
 
     }
+    
+    
     public class Product : CheckConcurrencyEntity
     {
         public int Id { get; set; }

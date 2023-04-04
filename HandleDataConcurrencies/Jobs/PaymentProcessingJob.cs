@@ -63,7 +63,7 @@ public class PaymentProcessingJob : BackgroundService
                             else
                             {
                                 var databasePayment = (Payment)databaseValues.ToObject();
-                                payment.RowVersion = databasePayment.RowVersion;
+                                //payment.RowVersion = databasePayment.RowVersion;
                                 payment.Status = databasePayment.Status;
                             }
                         }

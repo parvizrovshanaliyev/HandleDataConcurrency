@@ -28,11 +28,27 @@ namespace HandleDataConcurrencies.Data
             return base.SaveChanges();
         }
 
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            foreach (var entry in ChangeTracker.Entries<ICheckConcurrencyEntity>())
+            {
+                // Increment the version number of the entity
+                entry.Entity.Version=Guid.NewGuid();
+                if (entry.State == EntityState.Modified)
+                {
+                    // Increment the version number of the entity
+                    entry.Entity.Version=Guid.NewGuid();
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Payment>()
-                .Property(p => p.RowVersion)
-                .IsRowVersion();
+            //modelBuilder.Entity<Payment>()
+            //    .Property(p => p.RowVersion)
+            //    .IsRowVersion();
         }
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
