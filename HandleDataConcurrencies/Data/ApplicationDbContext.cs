@@ -28,6 +28,20 @@ namespace HandleDataConcurrencies.Data
             return base.SaveChanges();
         }
 
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            foreach (var entry in ChangeTracker.Entries<CheckConcurrencyEntity>())
+            {
+                if (entry.State == EntityState.Modified)
+                {
+                    // Increment the version number of the entity
+                    entry.Entity.Version=Guid.NewGuid().ToByteArray();
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Payment>()
