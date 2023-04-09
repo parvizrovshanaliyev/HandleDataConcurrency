@@ -15,6 +15,7 @@ namespace HandleDataConcurrencies.Models
         public DateTime UpdateDate { get; set; }
     }
 
+
     public enum PaymentStatus
     {
         Waiting,

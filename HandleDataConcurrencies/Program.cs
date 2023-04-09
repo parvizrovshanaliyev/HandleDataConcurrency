@@ -1,4 +1,5 @@
 using HandleDataConcurrencies.Data;
+using HandleDataConcurrency.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -33,6 +34,9 @@ var builder = WebApplication.CreateBuilder(args);
             });
         });
     });
+
+
+    builder.Services.AddScoped<IPaymentService, PaymentService>();
 }
 
 

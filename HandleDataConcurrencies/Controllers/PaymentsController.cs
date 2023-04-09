@@ -1,5 +1,7 @@
 ﻿using HandleDataConcurrencies.Data;
 using HandleDataConcurrencies.Models;
+using HandleDataConcurrency.Models;
+using HandleDataConcurrency.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +12,12 @@ namespace HandleDataConcurrencies.Controllers
     public class PaymentsController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
+        private readonly IPaymentService _service;
 
-        public PaymentsController(ApplicationDbContext dbContext)
+        public PaymentsController(ApplicationDbContext dbContext, IPaymentService service)
         {
             _dbContext = dbContext;
+            _service = service;
         }
 
         [HttpGet("{id}")]
@@ -28,6 +32,13 @@ namespace HandleDataConcurrencies.Controllers
 
             return Ok(payment);
         }
+
+        [HttpPost("GetAll")]
+        public async Task<IActionResult> GetAll(PagingRequest request)
+        {
+            return Ok(await _service.GetAllAsync(request));
+        }
+
 
         [HttpPost("CreatePayments")]
         public async Task<ActionResult> CreatePayments(int count = 10000)
