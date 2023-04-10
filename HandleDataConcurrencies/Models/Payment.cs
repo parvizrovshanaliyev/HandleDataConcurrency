@@ -22,6 +22,7 @@ namespace HandleDataConcurrencies.Models
         public Guid Version { get; set; }
     }
 
+
     public enum PaymentStatus
     {
         Waiting,

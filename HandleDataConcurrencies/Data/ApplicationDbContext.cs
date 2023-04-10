@@ -30,14 +30,12 @@ namespace HandleDataConcurrencies.Data
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            foreach (var entry in ChangeTracker.Entries<ICheckConcurrencyEntity>())
+            foreach (var entry in ChangeTracker.Entries<CheckConcurrencyEntity>())
             {
-                // Increment the version number of the entity
-                entry.Entity.Version=Guid.NewGuid();
                 if (entry.State == EntityState.Modified)
                 {
                     // Increment the version number of the entity
-                    entry.Entity.Version=Guid.NewGuid();
+                    entry.Entity.Version=Guid.NewGuid().ToByteArray();
                 }
             }
 
