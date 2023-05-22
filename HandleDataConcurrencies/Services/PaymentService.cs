@@ -29,7 +29,7 @@ public class PaymentService : IPaymentService
                 Status = p.Status,
                 Amount = p.Amount,
                 CreateDate = p.CreateDate,
-                UpdateDate = p.UpdateDate  ,
+                UpdateDate = p.UpdateDate,
                 IsProcessed = p.IsProcessed
             };
 
@@ -126,7 +126,9 @@ public class PaymentService : IPaymentService
                     if (filterValue is DateTime && DateTime.TryParse(filterValue.ToString(), out DateTime value))
                         body += $"{filterFieldName}.Date <= {value.Date}";
                 }
+
                 Console.WriteLine(body);
+
                 query = query.WhereDynamic($"x => x.{body}");
             }
 
