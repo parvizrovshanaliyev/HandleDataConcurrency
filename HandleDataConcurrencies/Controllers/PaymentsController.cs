@@ -60,7 +60,7 @@ namespace HandleDataConcurrencies.Controllers
 
             _dbContext.Payments.AddRange(payments);
 
-            await _dbContext.SaveChangesAsync();
+            // await _dbContext.SaveChangesAsync();
 
             return Ok();
         }

@@ -37,6 +37,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 
     builder.Services.AddScoped<IPaymentService, PaymentService>();
+    builder.Services.AddScoped<IDocumentService, DocumentService>();
 }
 
 

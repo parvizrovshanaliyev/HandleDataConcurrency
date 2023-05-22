@@ -54,6 +54,80 @@ namespace HandleDataConcurrencies.Migrations
                     b.ToTable("Payments");
                 });
 
+            modelBuilder.Entity("HandleDataConcurrency.Models.Documents.Document", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("Prefix")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("HandleDataConcurrency.Models.Documents.DocumentNumber", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("BudgetCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DocumentType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<byte>("Prefix")
+                        .HasColumnType("tinyint");
+
+                    b.Property<Guid>("RowVersion")
+                        .IsConcurrencyToken()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("SequenceNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DocumentNumbers");
+                });
+
             modelBuilder.Entity("HandleDataConcurrency.Models.Product", b =>
                 {
                     b.Property<int>("Id")
