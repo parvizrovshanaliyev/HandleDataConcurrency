@@ -4,6 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HandleDataConcurrencies.Jobs;
 
+/// <summary>
+/// uncompleted
+/// </summary>
 public class PaymentProcessingJob : BackgroundService
 {
     private readonly ILogger<PaymentProcessingJob> _logger;

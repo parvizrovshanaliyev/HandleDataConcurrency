@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HandleDataConcurrency.Services;
 
+/// <summary>
+/// uncompleted 
+/// </summary>
 public interface IPaymentService
 {
     Task<TableResponse<PaymentDto>> GetAllAsync(PagingRequest request);

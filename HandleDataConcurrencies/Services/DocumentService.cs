@@ -9,7 +9,11 @@ public interface IDocumentService
 {
     Task<Document> CreateDocumentAsync(CancellationToken cancellationToken);
     
-    ValueTask<string> GenerateDocNumberAsync(DocumentType documentType,string prefix, string budgetCode,CancellationToken cancellationToken);
+    ValueTask<string> GenerateDocNumberAsync(
+        DocumentType documentType,
+        string prefix,
+        string budgetCode,
+        CancellationToken cancellationToken);
     
 }
 public class DocumentService : IDocumentService
@@ -30,10 +34,17 @@ public class DocumentService : IDocumentService
         var prefix = ((byte)documentType).ToString();
         
         //2. 
-        var documentNumber = await GenerateDocNumberAsync(documentType:documentType,prefix: prefix, budgetCode: budgetCode, cancellationToken);
+        var documentNumber = await GenerateDocNumberAsync(
+            documentType:documentType,
+            prefix: prefix,
+            budgetCode: budgetCode,
+            cancellationToken);
         
         //3. create document
-        var document = new Document(documentType: documentType, status: DocumentStatus.Waiting);
+        var document = new Document(
+            documentType: documentType,
+            status: DocumentStatus.Waiting);
+        
         document.SetDocumentNumber(documentNumber);
         
         await _context.Documents.AddAsync(document, cancellationToken).ConfigureAwait(false);
@@ -44,13 +55,18 @@ public class DocumentService : IDocumentService
         return document;
     }
 
-    public async ValueTask<string> GenerateDocNumberAsync(DocumentType documentType, string prefix, string budgetCode,CancellationToken cancellationToken)
+    public async ValueTask<string> GenerateDocNumberAsync(
+        DocumentType documentType,
+        string prefix,
+        string budgetCode,
+        CancellationToken cancellationToken)
     {
         int maxRetryCount = 3;
         int retryCount = 0;
         bool success = false;
         var currentYear = DateTime.Now.Year;
         DocumentNumber? lastDocumentNumber = null;
+        
         while (retryCount < maxRetryCount && !success)
         {
             try
@@ -89,11 +105,6 @@ public class DocumentService : IDocumentService
             
                     lastDocumentNumber.SetSequenceNumber(sequenceNumber);
                     
-                    // // Detach the tracked entity
-                    // _context.Entry(lastDocumentNumber).State = EntityState.Detached;
-                    //
-                    // // Attach the modified entity
-                    // _context.Attach(lastDocumentNumber);
                     _context.Entry(lastDocumentNumber).Property(d => d.SequenceNumber).IsModified = true;
                 }
         
