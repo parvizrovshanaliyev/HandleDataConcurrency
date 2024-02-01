@@ -1,67 +1,180 @@
-# Handle Data Concurrency
+# Managing Data Concurrency in a Web Application with Optimistic Concurrency Control
 
+## Introduction
 
+Handling data concurrency in a web application is a critical aspect to ensure data integrity, especially when dealing with multiple users making simultaneous edits. 
+This example, built on Dotnet Core 6 and Entity Framework Core 6, demonstrates an effective implementation of Optimistic Concurrency Control.
 
+## Document Numbering System
 
-This code demonstrates how to handle data concurrency issues when generating document numbers in a document management system.
+### The Concurrency Challenge
 
-## Prerequisites
+In a web application, the challenge arises when multiple users attempt to edit the same data concurrently. 
+This scenario can lead to data overwrites, a common issue when several users access identical data simultaneously. 
+The risk is especially evident when one user is editing a record, and another user concurrently saves changes, inadvertently overwriting the modifications made by the first user.
 
-- .NET Core SDK
-- Entity Framework Core
+### The Optimal Solution
 
-## Getting Started
+To address this challenge, implementing a concurrency control mechanism becomes imperative. 
+This mechanism prevents simultaneous edits by different users and can be achieved through techniques like using a version number or a timestamp to track changes made to a record.
+When a user attempts to save modifications, the application checks whether the record has been altered by another user since it was last loaded. 
+If modifications are detected, the application prompts the user to reload the record and reapply the changes, ensuring data consistency.
 
-1. Clone the repository:
+## Project Overview
 
-   ```bash
-   git clone https://github.com/your-repository-url
-   ```
+### The Core Problem
 
-2. Build the solution:
+The primary goal of this project is to establish a system that ensures accurate and non-repetitive numbering of documents,
+all while incorporating Optimistic Concurrency Control. The challenge becomes apparent when two users simultaneously receive the latest document number. 
+If one processes it faster than the other, the last document number held by the slower user becomes outdated.
+To counter this, the system employs a version number to track changes made to the record. When attempting to save modifications, the application checks if the record has been altered by another user since it was last loaded. 
+If modifications are identified, the application notifies the user with an error message, prompting them to reload the record and reapply the changes.
 
-   ```bash
-   dotnet build
-   ```
+Now, let's delve into the key components and the step-by-step implementation of this solution:
 
-3. Run the application:
+### 1. ICheckConcurrency Interface
 
-   ```bash
-   dotnet run
-   ```
+The first step involves creating an interface, `ICheckConcurrency`, ensuring that domain models implement Concurrency Control. 
+This interface includes a `RowVersion` property, acting as a unique identifier for concurrency checks.
 
-## Code Explanation - Document Numbering
+```csharp
+public interface ICheckConcurrency
+{
+    Guid RowVersion { get; set; }
+}
+```
 
-### `IDocumentService` Interface
+### 2. DocumentNumber Domain Model
 
-This interface defines the contract for the document service. It contains two methods: `CreateDocumentAsync` and `GenerateDocNumberAsync`.
+The `DocumentNumber` domain model implements the `ICheckConcurrency` interface, signaling that it participates in concurrency control. The `RowVersion` field uses the `ConcurrencyCheck` DataAnnotation, instructing the ORM to perform Concurrency Control.
 
-### `DocumentService` Class
+```csharp
+public class DocumentNumber : ICheckConcurrency, IAudit
+{
+    // ... Other properties and methods ...
 
-This class implements the `IDocumentService` interface and provides the functionality to create documents and generate document numbers.
+    [ConcurrencyCheck]
+    public Guid RowVersion { get; set; }
 
-#### `CreateDocumentAsync` Method
+    // ... Other properties and methods ...
+}
+```
 
-This method creates a new document with a generated document number. It follows the following steps:
-1. Determine the budget code and document type.
-2. Generate the document number by calling the `GenerateDocNumberAsync` method.
-3. Create a new `Document` object with the provided document type and set the status to "Waiting".
-4. Set the document number obtained from the `GenerateDocNumberAsync` method on the document.
-5. Add the document to the database context.
-6. Save the changes to the database.
+### 3. ApplicationDbContext SaveChangesAsync Method Override
 
-#### `GenerateDocNumberAsync` Method
+Within the `ApplicationDbContext` class, we override the `SaveChangesAsync` method to ensure that, during the save operation, the `RowVersion` for entities implementing `ICheckConcurrency` receives a different value.
 
-This method generates a unique document number based on the document type, prefix, and budget code. It handles concurrency issues using a retry mechanism. The steps involved are:
-1. Set the maximum retry count and initialize the retry count and success flag.
-2. Get the current year for the document number.
-3. Enter a retry loop to handle concurrency issues.
-4. Check if a previous document number exists for the given document type, budget code, and year.
-5. If no previous document number exists, create a new one with the provided document type, year, and budget code. Set the sequence number to 1.
-6. If a previous document number exists, increment the sequence number and update the last document number.
-7. Save the changes to the database.
-8. Set the success flag to true and return the formatted document number.
+```csharp
+public class ApplicationDbContext : DbContext
+{
+    // ... Other DbContext configurations ...
 
-## Conclusion
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        ApplyConcurrencyUpdates();
+        ApplyAuditUpdates();
 
-This code demonstrates how to handle data concurrency issues when generating document numbers in a document management system. By implementing proper concurrency handling techniques, you can ensure the integrity and uniqueness of document numbers in a multi-user environment.
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void ApplyConcurrencyUpdates()
+    {
+            var entities = ChangeTracker.Entries<ICheckConcurrency>()
+                .Where(e => e.State is EntityState.Modified or EntityState.Added);
+
+            foreach (var entityEntry in entities)
+            {
+                entityEntry.Entity.RowVersion = Guid.NewGuid();
+            }
+    }
+
+    private void ApplyAuditUpdates()
+    {
+        // ... Apply updates for audit fields ...
+    }
+}
+```
+
+### 4. GenerateDocNumberAsync Method
+
+The `GenerateDocNumberAsync` method outlines the intricate process of generating a document number while handling Concurrency Control. The key aspect is the incorporation of a retry mechanism to address concurrency issues and reattempt the operation.
+
+```csharp
+public async ValueTask<string> GenerateDocNumberAsync(
+        DocumentType documentType,
+        string prefix,
+        string code,
+        CancellationToken cancellationToken)
+    {
+        int maxRetryCount = 3;
+        int retryCount = 0;
+        bool success = false;
+        var currentYear = DateTime.Now.Year;
+        DocumentNumber? lastDocumentNumber = null;
+
+        while (retryCount < maxRetryCount && !success)
+        {
+            try
+            {
+                if (lastDocumentNumber != null)
+                {
+                    // Detach the tracked entity
+                    _context.Entry(lastDocumentNumber).State = EntityState.Detached;
+                    lastDocumentNumber = null;
+                }
+
+                // 1. Get the last documentNumber by document type, budget code, and current year
+                lastDocumentNumber = await _context.DocumentNumbers
+                    .Where(d => d.DocumentType == documentType && d.Code == code && d.Year == currentYear)
+                    .OrderByDescending(d => d.Id)
+                    .FirstOrDefaultAsync(cancellationToken)
+                    .ConfigureAwait(false);
+
+                // 2. Create a new documentNumber or update the last documentNumber
+                long sequenceNumber = 1;
+
+                if (lastDocumentNumber == null)
+                {
+                    // Create a new documentNumber
+                    lastDocumentNumber =
+                        new DocumentNumber(documentType: documentType, year: currentYear, code: code);
+                    lastDocumentNumber.SetSequenceNumber(sequenceNumber);
+                    await _context.AddAsync(lastDocumentNumber, cancellationToken);
+                }
+                else
+                {
+                    // Update the last documentNumber
+                    sequenceNumber = lastDocumentNumber.SequenceNumber + 1;
+                    lastDocumentNumber.SetSequenceNumber(sequenceNumber);
+
+                    // Mark the SequenceNumber property as modified
+                    _context.Entry(lastDocumentNumber).Property(d => d.SequenceNumber).IsModified = true;
+                }
+
+                // 3. Save the documentNumber
+                await _context.SaveChangesAsync(cancellationToken);
+                success = true;
+
+                // Format the document number: prefix(45) + budgetCode(2728501) + sequenceNumber(00001) = 45272850100001
+                return GetFormattedDocumentNumber(lastDocumentNumber);
+            }
+            // 4. Handle concurrency exception and retry from step 1
+            catch (DbUpdateConcurrencyException e)
+            {
+                retryCount++;
+                Console.WriteLine(e);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                // Handle other exceptions and break the loop
+                break;
+            }
+        }
+
+        // Maximum retry count reached or save operation failed, handle the failure case here
+        throw new Exception("Failed to generate document number.");
+    }
+```
+
+In conclusion, this comprehensive approach ensures a robust solution for managing data concurrency, providing a secure and reliable system for generating document numbers in a web application. 

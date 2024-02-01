@@ -1,8 +1,8 @@
-﻿using HandleDataConcurrency.Domain;
-using HandleDataConcurrency.Domain.Documents;
+﻿using HandleDataConcurrency.Api.Domain;
+using HandleDataConcurrency.Api.Domain.Documents;
 using Microsoft.EntityFrameworkCore;
 
-namespace HandleDataConcurrency.Data
+namespace HandleDataConcurrency.Api.Data
 {
     public class ApplicationDbContext : DbContext
     {

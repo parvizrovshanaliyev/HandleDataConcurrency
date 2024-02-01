@@ -1,6 +1,6 @@
-﻿using HandleDataConcurrency.Domain.Documents;
+﻿using HandleDataConcurrency.Api.Domain.Documents;
 
-namespace HandleDataConcurrency.Services;
+namespace HandleDataConcurrency.Api.Services;
 
 public interface IDocumentService
 {

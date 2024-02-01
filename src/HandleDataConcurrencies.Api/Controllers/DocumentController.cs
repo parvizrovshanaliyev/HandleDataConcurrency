@@ -1,7 +1,7 @@
-﻿using HandleDataConcurrency.Services;
+﻿using HandleDataConcurrency.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HandleDataConcurrency.Controllers;
+namespace HandleDataConcurrency.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]

@@ -1,6 +1,6 @@
-using HandleDataConcurrency;
-using HandleDataConcurrency.Data;
-using HandleDataConcurrency.Services;
+using HandleDataConcurrency.Api;
+using HandleDataConcurrency.Api.Data;
+using HandleDataConcurrency.Api.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -74,7 +74,7 @@ var app = builder.Build();
 
 
 
-namespace HandleDataConcurrency
+namespace HandleDataConcurrency.Api
 {
     internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
     {

@@ -1,8 +1,8 @@
-﻿using HandleDataConcurrency.Data;
-using HandleDataConcurrency.Domain.Documents;
+﻿using HandleDataConcurrency.Api.Data;
+using HandleDataConcurrency.Api.Domain.Documents;
 using Microsoft.EntityFrameworkCore;
 
-namespace HandleDataConcurrency.Services;
+namespace HandleDataConcurrency.Api.Services;
 
 public class DocumentService : IDocumentService
 {

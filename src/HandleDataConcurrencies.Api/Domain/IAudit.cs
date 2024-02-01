@@ -1,4 +1,4 @@
-﻿namespace HandleDataConcurrency.Domain;
+﻿namespace HandleDataConcurrency.Api.Domain;
 
 public interface IAudit
 {

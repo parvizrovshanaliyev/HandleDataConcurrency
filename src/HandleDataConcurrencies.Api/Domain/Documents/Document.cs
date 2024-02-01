@@ -1,4 +1,4 @@
-﻿namespace HandleDataConcurrency.Domain.Documents;
+﻿namespace HandleDataConcurrency.Api.Domain.Documents;
 
 public class Document
 {
