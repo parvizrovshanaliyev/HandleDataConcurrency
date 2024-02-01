@@ -1,4 +1,4 @@
-using HandleDataConcurrencies.Data;
+using HandleDataConcurrency.Data;
 using HandleDataConcurrency.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -9,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddControllers();
     builder.Services.AddLogging();
 
-    //builder.Services.AddHostedService<PaymentProcessingJob>();
 
     // Add services to the container.
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -34,9 +33,7 @@ var builder = WebApplication.CreateBuilder(args);
             });
         });
     });
-
-
-    builder.Services.AddScoped<IPaymentService, PaymentService>();
+    
     builder.Services.AddScoped<IDocumentService, DocumentService>();
 }
 

@@ -24,4 +24,9 @@
     <PackageReference Include="Z.EntityFramework.Plus.EF6" Version="7.20.0" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
 </Project>

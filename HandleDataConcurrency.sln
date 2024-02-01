@@ -5,8 +5,6 @@ VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandleDataConcurrency", "HandleDataConcurrencies\HandleDataConcurrency.csproj", "{6D500B94-6F10-41F6-9B86-EDBBA16B7D33}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HandleDataConcurrency.Test", "HandleDataConcurrency.Test\HandleDataConcurrency.Test.csproj", "{CD4DEFF9-983D-4AEB-9D03-3D30D1DAFEA8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{6D500B94-6F10-41F6-9B86-EDBBA16B7D33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D500B94-6F10-41F6-9B86-EDBBA16B7D33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D500B94-6F10-41F6-9B86-EDBBA16B7D33}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD4DEFF9-983D-4AEB-9D03-3D30D1DAFEA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD4DEFF9-983D-4AEB-9D03-3D30D1DAFEA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD4DEFF9-983D-4AEB-9D03-3D30D1DAFEA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD4DEFF9-983D-4AEB-9D03-3D30D1DAFEA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
