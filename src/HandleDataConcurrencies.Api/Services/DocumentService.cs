@@ -17,22 +17,26 @@ public class DocumentService : IDocumentService
     public async Task<Document> CreateDocumentAsync(CancellationToken cancellationToken)
     {
         string code = "2728501";
+        
         //1. first step prefix
         var documentType = DocumentType.ShortTermLiability;
         var prefix = ((byte)documentType).ToString();
 
         //2. 
-        var documentNumber =
-            await GenerateDocNumberAsync(documentType: documentType, prefix: prefix, code: code, cancellationToken);
+        var documentNumber = await GenerateDocNumberAsync(
+            documentType: documentType,
+            prefix: prefix,
+            code: code,
+            cancellationToken);
 
         //3. create document
         var document = new Document(documentType: documentType, status: DocumentStatus.Waiting);
         document.SetDocumentNumber(documentNumber);
 
-        await _context.Documents.AddAsync(document, cancellationToken).ConfigureAwait(false);
+        await _context.Documents.AddAsync(document, cancellationToken);
 
         //4. save document
-        await _context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await _context.SaveChangesAsync(cancellationToken);
 
         return document;
     }

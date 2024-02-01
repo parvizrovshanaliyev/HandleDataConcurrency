@@ -3,10 +3,12 @@
   <component name="EfCoreDialogsState">
     <option name="keyValueStorage">
       <map>
+        <entry key="Common:1ea5e13c-1621-4312-ba7b-f566ea65abbd:dbContext" value="HandleDataConcurrency.Api.Data.ApplicationDbContext" />
         <entry key="Common:6d500b94-6f10-41f6-9b86-edbba16b7d33:dbContext" value="HandleDataConcurrency.Data.ApplicationDbContext" />
         <entry key="Common:buildConfiguration" value="Debug" />
         <entry key="Common:noBuild" value="false" />
         <entry key="Common:outputFolder" value="Migrations" />
+        <entry key="Common:useDefaultConnection" value="true" />
       </map>
     </option>
   </component>

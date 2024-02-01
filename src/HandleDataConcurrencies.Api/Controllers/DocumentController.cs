@@ -1,4 +1,5 @@
 ﻿using HandleDataConcurrency.Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HandleDataConcurrency.Api.Controllers;
@@ -14,8 +15,8 @@ public class DocumentController : ControllerBase
         _service = service;
     }
         
-        
-    [HttpPost]
+    [AllowAnonymous]
+    [HttpPost("create-document")]
     public async Task<ActionResult> Create(CancellationToken cancellationToken)
     {
         return Ok(await _service.CreateDocumentAsync(cancellationToken));

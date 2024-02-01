@@ -16,7 +16,7 @@ public class Document
     public DocumentStatus Status { get; set; }
 
     public DateTime CreatedDate { get; set; } = DateTime.Now;
-    public string Number { get; private set; }
+    public string Number { get;  set; }
 
     public void SetDocumentNumber(string documentNumber)
     {
