@@ -123,7 +123,7 @@ public async ValueTask<string> GenerateDocNumberAsync(
                     lastDocumentNumber = null;
                 }
 
-                // 1. Get the last documentNumber by document type, budget code, and current year
+                // 1. Get the last documentNumber by document type, code, and current year
                 lastDocumentNumber = await _context.DocumentNumbers
                     .Where(d => d.DocumentType == documentType && d.Code == code && d.Year == currentYear)
                     .OrderByDescending(d => d.Id)
