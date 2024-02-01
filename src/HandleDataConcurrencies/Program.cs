@@ -1,3 +1,4 @@
+using HandleDataConcurrency;
 using HandleDataConcurrency.Data;
 using HandleDataConcurrency.Services;
 using Microsoft.EntityFrameworkCore;
@@ -73,7 +74,10 @@ var app = builder.Build();
 
 
 
-internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
+namespace HandleDataConcurrency
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
+    {
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
 }

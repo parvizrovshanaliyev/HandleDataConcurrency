@@ -1,4 +1,5 @@
-﻿using HandleDataConcurrency.Domain.Documents;
+﻿using HandleDataConcurrency.Domain;
+using HandleDataConcurrency.Domain.Documents;
 using Microsoft.EntityFrameworkCore;
 
 namespace HandleDataConcurrency.Data
@@ -28,14 +29,7 @@ namespace HandleDataConcurrency.Data
 
             foreach (var entityEntry in entities)
             {
-                if (entityEntry.State == EntityState.Added)
-                {
-                    entityEntry.Entity.RowVersion = Guid.NewGuid();
-                }
-                else
-                {
-                    entityEntry.Entity.RowVersion = Guid.NewGuid();
-                }
+                entityEntry.Entity.RowVersion = Guid.NewGuid();
             }
         }
         

@@ -1,4 +1,4 @@
-﻿namespace HandleDataConcurrency.Domain.Documents;
+﻿namespace HandleDataConcurrency.Domain;
 
 public interface IAudit
 {
