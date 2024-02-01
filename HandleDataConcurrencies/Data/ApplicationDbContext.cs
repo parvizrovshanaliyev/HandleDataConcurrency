@@ -28,14 +28,7 @@ namespace HandleDataConcurrency.Data
 
             foreach (var entityEntry in entities)
             {
-                if (entityEntry.State == EntityState.Added)
-                {
-                    entityEntry.Entity.RowVersion = Guid.NewGuid();
-                }
-                else
-                {
-                    entityEntry.Entity.RowVersion = Guid.NewGuid();
-                }
+                entityEntry.Entity.RowVersion = Guid.NewGuid();
             }
         }
         
